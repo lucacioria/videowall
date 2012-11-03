@@ -422,3 +422,15 @@ footer {
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
 /* close commented backslash hack */
+
+div.loader {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #f2f2f2;
+	padding: 20px;
+	border-radius: 3px;
+	display: none;
+	position: fixed;
+	bottom: 40px;
+	left: 40px;
+	z-index: 99999;
+}
