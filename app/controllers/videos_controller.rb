@@ -60,7 +60,7 @@ class VideosController < ApplicationController
 
   def sort_by_dateish(list)
     with_date = list.find_all{|x| x[:action_date].nil? == false}.sort_by{|x|x[:action_date]}
-    without_date = list.find_all{|x| x[:action_date].nil?}.reverse
+    without_date = list.find_all{|x| x[:action_date].nil?}.sort_by{|x|x.id}.reverse
     map_factor = without_date.count.to_f / (with_date.count+1)
     (0...without_date.count).each {|i|
       with_date.insert([i * map_factor, with_date.count].min , without_date[i])
