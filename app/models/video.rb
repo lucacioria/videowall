@@ -3,4 +3,7 @@ class Video < ActiveRecord::Base
 
   belongs_to :user
 
+  def self.video_blacklisted(url)
+  	return [].include? url
+  end
 end
