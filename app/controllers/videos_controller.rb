@@ -1,6 +1,6 @@
 class VideosController < ApplicationController
   
-  #before_filter :fake_login
+  before_filter :fake_login
 
   def index
     if user_signed_in? then
