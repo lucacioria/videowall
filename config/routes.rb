@@ -1,4 +1,6 @@
 Videowall::Application.routes.draw do
+  devise_for :users
+  match '/auth/:provider/callback' => 'authentications#create'
   resources :videos
 
   # The priority is based upon order of creation:
@@ -57,4 +59,5 @@ Videowall::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   match ':controller(/:action(/:id))(.:format)'
+  root :to => "main_app#index"
 end

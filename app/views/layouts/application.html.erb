@@ -8,6 +8,18 @@
 </head>
 <body>
 
+	<p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
+
+    <%= link_to 'Login with Facebook', '/auth/facebook/' %>
+
+    <% if user_signed_in? %>
+  		<div>Signed in as... <%= current_user.email %></div>
+  		<div>Token is <%= current_user.authentications.first.token %></div>
+	<% else %>
+  		<div>Not signed id</div>
+	<% end %>
+
 <%= yield %>
 
 </body>
