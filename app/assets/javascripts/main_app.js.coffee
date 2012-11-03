@@ -30,7 +30,7 @@ build_url = (res) ->
 	'/videos/' + res
 
 video_id = (url) ->
-  match = url.match /\?v=([^&]+)/
+  match = url.match /v=([^&#]+)/
   match?[1]
 
 get_videos = (id, cb) ->
@@ -125,6 +125,9 @@ $ ->
         $search.val ui.item.label
         false
       selected: (event, ui) ->
+        $search.val ui.item.label
+        false
+      close: (event, ui) ->
         $search.val ui.item.label
         false
       change: (event, ui) ->
