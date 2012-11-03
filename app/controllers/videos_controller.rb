@@ -11,7 +11,7 @@ class VideosController < ApplicationController
       videos_i_posted = get_videos_i_posted()
       update_videos_i_posted_in_database(videos_i_posted)
       ###
-      render json: current_user.videos
+      render json: current_user.videos.shuffle
     else
       render json: []
     end
