@@ -19,7 +19,7 @@ V_SIZES = [
 ]
 
 build_url = (res) ->
-	'/videos.json'
+	'/videos'
 
 video_id = (url) ->
   match = url.match /\?v=([^&]+)/
