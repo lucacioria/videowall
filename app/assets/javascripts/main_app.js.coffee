@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
-
 COLUMN_WIDTH = 245
 
 V_SIZES = [
@@ -177,6 +173,7 @@ $ ->
 
   video_template = _.template $('#video-template').html()
   screenshot_template = _.template $('#screenshot-template').html()
+  novideos_template = _.template $('#novideos-template').html()
 
   history = History
   history.Adapter.bind window, 'statechange', ->
@@ -202,7 +199,13 @@ $ ->
             get_videos el.id, (v) ->
               videos = v
               clear_container()
-              display_videos_chunk()
+              if videos.length is 0
+                console.log 'novideos'
+                $loader.css 'display', 'none'
+                $cont.append novideos_template
+                  name: el.name
+              else
+                display_videos_chunk()
 
             # history.pushState {state:state_index}, '', '/friend/' + ui.item.label
             state_index++
