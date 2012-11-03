@@ -1,5 +1,7 @@
 LISTA DEI TUOI VIDEO LIKED
 
-<% @likes.each do |link| %>
-	<a href="<%= link["url"] %>"><%= link["url"] %></a>
+<% if not @likes.nil? then %>
+	<% @likes.each do |link| %>
+		<a href="<%= link["url"] %>"><%= link["url"] %></a>
+	<% end %>
 <% end %>
