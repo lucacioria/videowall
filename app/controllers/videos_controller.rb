@@ -42,6 +42,18 @@ class VideosController < ApplicationController
     end
   end
 
+  def toggle_starred
+    video = Video.find(params[:id])
+    video.starred = !video.starred
+    video.save
+  end
+
+  def toggle_hidden
+    video = Video.find(params[:id])
+    video.hidden = !video.hidden
+    video.save
+  end
+
   private
 
   def sort_by_dateish(list)
