@@ -153,3 +153,6 @@ $ ->
             # history.pushState {state:state_index}, '', '/friend/' + ui.item.label
             state_index++
             return false
+
+    $('.right_menu a').click ->
+      my_videos()
