@@ -1,6 +1,6 @@
 class VideosController < ApplicationController
   
-  before_filter :fake_login
+  #before_filter :fake_login
 
   before_filter :setup_youtube
   def me
