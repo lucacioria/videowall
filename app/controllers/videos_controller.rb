@@ -1,8 +1,8 @@
 class VideosController < ApplicationController
   
-  #before_filter :fake_login
+  before_filter :fake_login
 
-  def index
+  def me
     if user_signed_in? then
       ### videos I like
       videos_i_like = get_videos_i_like()
@@ -17,7 +17,28 @@ class VideosController < ApplicationController
     end
   end
 
+  def friend
+    if user_signed_in? then
+      render json: []
+    else
+      render json: []
+    end
+  end
+
+  def friends
+    if user_signed_in? then
+      render json: get_friends
+    else
+      render json: []
+    end
+  end
+
   private
+
+  def get_friends
+    rest = Koala::Facebook::API.new(current_user.authentications.first.token)
+    rest.graph_call("me/friends")
+  end
 
   def get_videos_i_like
     rest = Koala::Facebook::API.new(current_user.authentications.first.token)
