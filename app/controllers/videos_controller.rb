@@ -1,6 +1,6 @@
 class VideosController < ApplicationController
   
-  # before_filter :fake_login
+  before_filter :fake_login
 
   def me
     if user_signed_in? then
@@ -11,7 +11,20 @@ class VideosController < ApplicationController
       videos_i_posted = get_videos_i_posted()
       update_videos_i_posted_in_database(videos_i_posted)
       ###
-      render json: current_user.videos.shuffle
+      out = []
+      require 'youtube_it'
+      client = YouTubeIt::Client.new
+      current_user.videos.each{ |video|
+        video_deleted = false
+        begin
+          video_youtube_id = video.video_url.scan(/v\=([^\&\#]+)/)[0][0]
+          client.video_by video_youtube_id
+        rescue
+          video_deleted = true
+        end
+        out << video if not video_deleted
+      }
+      render json: out
     else
       render json: []
     end
