@@ -25,7 +25,7 @@ videos = []
 current_index = 0
 
 build_url = (res) ->
-	'/videos'
+	'/videos/me'
 
 video_id = (url) ->
   match = url.match /\?v=([^&]+)/
