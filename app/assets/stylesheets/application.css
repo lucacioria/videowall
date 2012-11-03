@@ -13,4 +13,5 @@
  *= require layout
  *= require skeleton
  *= require_tree .
+ *= require jquery.ui.autocomplete
  */
