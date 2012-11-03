@@ -7,9 +7,13 @@
 
             <div class="right_menu">
                 <ul>
-                    <li><a href="#">logout</a></li>
-
-                    <li><a href="#">Edoardo Colombo</a></li>
+                    <li>
+                    	<% if user_signed_in? then %>
+                    		<a href="#"><%= current_user.email %></a>
+                    	<% else %>
+                    		<%= link_to('Login with Facebook', '/auth/facebook/') %>
+                    	<% end %>
+                    </li>
                 </ul>
             </div>
         </nav>

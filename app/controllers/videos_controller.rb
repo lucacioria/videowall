@@ -1,7 +1,8 @@
 class VideosController < ApplicationController
   
-  before_filter :fake_login
+  #before_filter :fake_login
 
+  before_filter :setup_youtube
   def me
     if user_signed_in? then
       ### videos I like
@@ -11,19 +12,8 @@ class VideosController < ApplicationController
       videos_i_posted = get_videos_i_posted()
       update_videos_i_posted_in_database(videos_i_posted)
       ###
-      out = []
-      require 'youtube_it'
-      client = YouTubeIt::Client.new
-      current_user.videos.each{ |video|
-        video_deleted = false
-        begin
-          video_youtube_id = video.video_url.scan(/v\=([^\&\#]+)/)[0][0]
-          client.video_by video_youtube_id
-        rescue
-          video_deleted = true
-        end
-        out << video if not video_deleted
-      }
+      out = current_user.videos.find(:all, :conditions  => "deleted = false")
+      out = sort_by_dateish(out)
       render json: out
     else
       render json: []
@@ -34,7 +24,7 @@ class VideosController < ApplicationController
     if user_signed_in? then
       friend = User.find(:first, :conditions => "uid = #{params[:id]}")
       videos = friend.videos
-      render json: (videos.nil? || videos.count == 0) ? [] : videos
+      render json: (videos.nil? || videos.count == 0) ? [] : sort_by_dateish(videos)
     else
       render json: []
     end
@@ -49,6 +39,16 @@ class VideosController < ApplicationController
   end
 
   private
+
+  def sort_by_dateish(list)
+    with_date = list.find_all{|x| x[:action_date].nil? == false}.sort_by{|x|x[:action_date]}
+    without_date = list.find_all{|x| x[:action_date].nil?}
+    map_factor = without_date.count.to_f / (with_date.count+1)
+    (0...without_date.count).each {|i|
+      with_date.insert([i * map_factor, with_date.count].min , without_date[i])
+    }
+    with_date.reverse
+  end
 
   def get_friends
     rest = Koala::Facebook::API.new(current_user.authentications.first.token)
@@ -71,9 +71,26 @@ class VideosController < ApplicationController
         v = current_user.videos.new
         v.video_url = video["url"]
         v.video_type = "facebook_like"
+        v.deleted = video_deleted_on_youtube video["url"]
         v.save
       end
     end
+  end
+
+  def setup_youtube
+      require 'youtube_it'
+      @youtube = YouTubeIt::Client.new
+  end
+
+  def video_deleted_on_youtube(url)
+    video_deleted = false
+    begin
+      video_youtube_id = url.scan(/v\=([^\&\#]+)/)[0][0]
+      @youtube.video_by video_youtube_id
+    rescue
+      video_deleted = true
+    end
+    video_deleted || Video.video_blacklisted(url)
   end
 
   def update_videos_i_posted_in_database(videos_i_posted)
@@ -83,6 +100,7 @@ class VideosController < ApplicationController
         v.video_url = video["url"]
         v.video_type = "facebook_post"
         v.action_date = Time.at(video["created_time"].to_i)
+        v.deleted = video_deleted_on_youtube video["url"]
         v.save
       end
     end
