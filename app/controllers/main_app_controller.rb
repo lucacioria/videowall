@@ -1,5 +1,7 @@
 class MainAppController < ApplicationController
 
+	#before_filter :fake_login
+
 	def index
 
 	end
@@ -7,11 +9,12 @@ class MainAppController < ApplicationController
 	def prova
 		if user_signed_in? then
 			@rest = Koala::Facebook::API.new(current_user.authentications.first.token)
-			#@likes = @rest.fql_query("SELECT * FROM url_like WHERE user_id = me() AND strpos(lower(url), 'http://www.youtube.com/') == 0")#.map{|x|"<a href='" + x["url"] + "'>" + x["url"] + "</a><br>"}
 			@likes = @rest.fql_query("SELECT url FROM url_like WHERE user_id = me() AND strpos(lower(url), 'http://www.youtube.com/') == 0")
-		else
-			@likes = "NOT SIGNED IN"
 		end
+	end
+
+	def fake_login
+	    sign_in User.find(1)
 	end
 	
 end

@@ -1,83 +1,37 @@
 class VideosController < ApplicationController
-  # GET /videos
-  # GET /videos.json
+  
+  #before_filter :fake_login
+
   def index
-    @videos = Video.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @videos }
+    if user_signed_in? then
+      videos_i_like = get_videos_i_like()
+      update_videos_in_database(videos_i_like)
+      render json: current_user.videos
+    else
+      render json: []
     end
   end
 
-  # GET /videos/1
-  # GET /videos/1.json
-  def show
-    @video = Video.find(params[:id])
+  private
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @video }
-    end
+  def get_videos_i_like
+    rest = Koala::Facebook::API.new(current_user.authentications.first.token)
+    rest.fql_query("SELECT url FROM url_like WHERE user_id = me() AND strpos(lower(url), 'http://www.youtube.com/') == 0")
   end
 
-  # GET /videos/new
-  # GET /videos/new.json
-  def new
-    @video = Video.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.json { render json: @video }
-    end
-  end
-
-  # GET /videos/1/edit
-  def edit
-    @video = Video.find(params[:id])
-  end
-
-  # POST /videos
-  # POST /videos.json
-  def create
-    @video = Video.new(params[:video])
-
-    respond_to do |format|
-      if @video.save
-        format.html { redirect_to @video, notice: 'Video was successfully created.' }
-        format.json { render json: @video, status: :created, location: @video }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @video.errors, status: :unprocessable_entity }
+  def update_videos_in_database(videos_i_like)
+    videos_i_like.each do |video|
+      if Video.find(:first, :conditions  => "video_url = '#{video["url"]}'").nil? then
+        v = current_user.videos.new
+        v.video_url = video["url"]
+        v.video_type = "facebook_like"
+        v.save
       end
     end
   end
 
-  # PUT /videos/1
-  # PUT /videos/1.json
-  def update
-    @video = Video.find(params[:id])
-
-    respond_to do |format|
-      if @video.update_attributes(params[:video])
-        format.html { redirect_to @video, notice: 'Video was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @video.errors, status: :unprocessable_entity }
-      end
-    end
+  def fake_login
+    sign_in User.find(1)
   end
-
-  # DELETE /videos/1
-  # DELETE /videos/1.json
-  def destroy
-    @video = Video.find(params[:id])
-    @video.destroy
-
-    respond_to do |format|
-      format.html { redirect_to videos_url }
-      format.json { head :no_content }
-    end
-  end
+  
 end
