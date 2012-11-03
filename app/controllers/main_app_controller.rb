@@ -3,14 +3,13 @@ class MainAppController < ApplicationController
 	# before_filter :fake_login
 
 	def index
-
+		if not user_signed_in? then
+			redirect_to '/main_app/login'
+		end
 	end
 
-	def prova
-		if user_signed_in? then
-			@rest = Koala::Facebook::API.new(current_user.authentications.first.token)
-			@likes = @rest.fql_query("SELECT url FROM url_like WHERE user_id = me() AND strpos(lower(url), 'http://www.youtube.com/') == 0")
-		end
+	def login
+
 	end
 
 	def fake_login
