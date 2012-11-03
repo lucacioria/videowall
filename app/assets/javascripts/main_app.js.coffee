@@ -58,15 +58,18 @@ display_videos_chunk = ->
     size = get_size video
     area += size.width * size.height
 
-    to_append.push $ screenshot_template
+    to_append.push screenshot_template
       video_id: video_id video.video_url
       width: size.width
       height: size.height
       class_mod: size.mod
       video_index: current_index
+      video_size: JSON.stringify size
 
     current_index++
 
+  to_append = $ to_append.join ''
+  console.log to_append
   $cont.append(to_append).masonry 'appended', to_append, true
 
 scroll_check = ->
@@ -76,8 +79,8 @@ scroll_check = ->
 load_video = ->
   id = $(@).data 'videoid'
   video = videos[id]
-  size = get_size video
-  $(@).html = video_template
+  size = $(@).data 'videosize'
+  $(@).html video_template
     video_id: video_id video.video_url
     width: size.width
     height: size.height
