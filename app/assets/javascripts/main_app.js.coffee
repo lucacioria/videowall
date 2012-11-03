@@ -79,6 +79,7 @@ display_videos_chunk = ->
       class_mod: size.mod
       video_index: current_index
       video_size: JSON.stringify size
+      highlighted: video.highlighted
 
     current_index++
 
@@ -119,6 +120,44 @@ clear_container = (first_load = false) ->
     columnWidth: COLUMN_WIDTH
     isResizable: true
 
+toggle_size = (size) ->
+  if size.mod is 'small'
+    V_SIZES[0]
+  else
+    V_SIZES[1]
+
+toggle_highlighted = (e) ->
+  e.preventDefault()
+  staron = $(@).data 'on'
+  $(@).data 'on', not staron
+  $(@).toggleClass 'on'
+  $(@).toggleClass 'off'
+
+  $screenshot = $(@).parent().parent().parent()
+  videosize = $screenshot.data 'videosize'
+  if videosize.mod is 'big' then return false
+
+  $screenshot.toggleClass 'video_small'
+  $screenshot.toggleClass 'video_big'
+  videosize = toggle_size videosize
+  $screenshot.data 'videosize', videosize
+
+  videoindex = $screenshot.data 'videoid'
+  video = videos[videoindex]
+  new_screen = $ screenshot_template
+    video_id: video_id video.video_url
+    width: videosize.width
+    height: videosize.height
+    class_mod: videosize.mod
+    video_index: videoindex
+    video_size: JSON.stringify videosize
+    highlighted: true
+  
+  $screenshot.html new_screen.html()
+
+  $cont.masonry 'reload'
+  return false
+
 $ ->
   $cont = $ '#container'
   $loader = $ '.loader'
@@ -127,6 +166,11 @@ $ ->
   $(window).resize update_cont_size
   $(window).scroll scroll_check
   $('.screenshot').live 'click', load_video
+  $('.screenshot').live 'mouseover', ->
+    $(@).addClass 'controls'
+  $('.screenshot').live 'mouseout', ->
+    $(@).removeClass 'controls'
+  $('.star').live 'click', toggle_highlighted
 
   video_template = _.template $('#video-template').html()
   screenshot_template = _.template $('#screenshot-template').html()
@@ -140,7 +184,6 @@ $ ->
     friends = f
     $search = $('#search')
     source = (el.name for el in friends)
-    console.log source
     $search.autocomplete
       source: source
       source: (request, response) ->

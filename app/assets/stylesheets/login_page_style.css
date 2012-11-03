@@ -434,3 +434,52 @@ div.loader {
 	left: 40px;
 	z-index: 99999;
 }
+
+.screenshot > div {
+	position: relative;
+	overflow: hidden;
+}
+
+.control-controls {
+	margin-top: -42px;
+	background-color: rgba(0, 0, 0, 1);
+	color: #f2f2f2;
+	height: 42px;
+	width: 100%;
+	text-align: right;
+	z-index: 999999;
+	-webkit-transition-property: margin-top;
+	-webkit-transition-duration: .4s;
+	-moz-transition-property: margin-top;
+	-moz-transition-duration: .4s;
+	transition-property: margin-top;
+	transition-duration: .4s;
+}
+
+.controls .control-controls {
+	margin-top: 0;
+}
+
+.control-controls > * {
+	margin-right: 10px;
+	clear: both;
+}
+
+.star.on, .star.off {
+	float: right;
+}
+
+.star.on div, .star.off div {
+	width: 34px;
+	height: 28px;
+	background-size: contain;
+	margin-top:6px;
+}
+
+.star.off div {
+	background: url(hbutton.png) center center no-repeat;
+}
+
+.star.on div {
+	background: url(hbuttonYELLOW.png) center center no-repeat;
+}
