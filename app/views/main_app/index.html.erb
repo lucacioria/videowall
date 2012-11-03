@@ -7,9 +7,8 @@
 
             <div class="right_menu">
                 <ul>
-                    <li><a href="#">logout</a></li>
+                    <li><a href="<%= user_signed_in? ? '#' : link_to('Login with Facebook', '/auth/facebook/') %>"><%= user_signed_in? ? current_user.email : "Login" %></a></li>
 
-                    <li><a href="#">Edoardo Colombo</a></li>
                 </ul>
             </div>
         </nav>
