@@ -12,7 +12,9 @@ class VideosController < ApplicationController
       videos_i_posted = get_videos_i_posted()
       update_videos_i_posted_in_database(videos_i_posted)
       ###
-      render json: current_user.videos.find(:all, :conditions  => "deleted = false").shuffle
+      out = current_user.videos.find(:all, :conditions  => "deleted = false")
+      out = sort_by_dateish(out)
+      render json: out
     else
       render json: []
     end
@@ -22,7 +24,7 @@ class VideosController < ApplicationController
     if user_signed_in? then
       friend = User.find(:first, :conditions => "uid = #{params[:id]}")
       videos = friend.videos
-      render json: (videos.nil? || videos.count == 0) ? [] : videos
+      render json: (videos.nil? || videos.count == 0) ? [] : sort_by_dateish(videos)
     else
       render json: []
     end
@@ -37,6 +39,16 @@ class VideosController < ApplicationController
   end
 
   private
+
+  def sort_by_dateish(list)
+    with_date = list.find_all{|x| x[:action_date].nil? == false}.sort_by{|x|x[:action_date]}
+    without_date = list.find_all{|x| x[:action_date].nil?}
+    map_factor = without_date.count.to_f / (with_date.count+1)
+    (0...without_date.count).each {|i|
+      with_date.insert([i * map_factor, with_date.count].min , without_date[i])
+    }
+    with_date.reverse
+  end
 
   def get_friends
     rest = Koala::Facebook::API.new(current_user.authentications.first.token)
