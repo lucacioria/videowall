@@ -19,7 +19,9 @@ class VideosController < ApplicationController
 
   def friend
     if user_signed_in? then
-      render json: []
+      friend = User.find(:first, :conditions => "uid = #{params[:id]}")
+      videos = friend.videos
+      render json: (videos.nil? || videos.count == 0) ? [] : videos
     else
       render json: []
     end
