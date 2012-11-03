@@ -1,4 +1,6 @@
 LISTA DEI TUOI VIDEO LIKED
 
 
-<%= @likes.each{|link| puts link} %>
+<%= @likes.each do |link| %>
+	<a href="<%= link["url"] %>"><%= link["url"] %></a>
+<%= end %>
