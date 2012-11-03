@@ -30,12 +30,17 @@
 <!-- Templates -->
 
 <script type="text/template" id="video-template"><div class="video_container_<%%- class_mod %>">
-		<iframe width="<%%- width %>" height="<%%- height %>" src="http://www.youtube.com/embed/<%%- video_id %>?modestbranding=1&rel=0&showinfo=0&autohide=1&autoplay=1"
+		<iframe width="<%%- width %>" height="<%%- height %>" src="http://www.youtube.com/embed/<%%- video_id %>?modestbranding=1&rel=0&showinfo=0&autohide=1&autoplay=1&wmode=transparent"
 frameborder="0" allowfullscreen></iframe>
 	</div></script>
 
 <script type="text/template" id="screenshot-template"><div class="video_<%%- class_mod %> screenshot" data-videoid="<%%- video_index %>" data-videosize="<%%- video_size %>">
 	<div class="video_container_<%%- class_mod %>">
+		<div class="control-controls">
+			<a href="#" class="star <%%= highlighted ? 'on' : 'off' %>" data-on="<%%= highlighted %>">
+				<div></div>
+			</a>
+		</div>
   		<img width="<%%- width %>" height="<%%- height %>" src="http://img.youtube.com/vi/<%%- video_id %>/hqdefault.jpg" />
   	</div>
   </div></script>
