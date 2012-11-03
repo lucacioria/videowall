@@ -1,6 +1,6 @@
 class MainAppController < ApplicationController
 
-	before_filter :fake_login
+	# before_filter :fake_login
 
 	def index
 
