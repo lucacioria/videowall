@@ -23,8 +23,12 @@ class VideosController < ApplicationController
   def friend
     if user_signed_in? then
       friend = User.find(:first, :conditions => "uid = #{params[:id]}")
-      videos = friend.videos
-      render json: (videos.nil? || videos.count == 0) ? [] : sort_by_dateish(videos)
+      if friend.nil? then
+        render json: []
+      else
+        videos = friend.videos.find(:all, :conditions  => "deleted = false")
+        render json: (videos.nil? || videos.count == 0) ? [] : sort_by_dateish(videos)
+      end
     else
       render json: []
     end
