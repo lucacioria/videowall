@@ -18,6 +18,7 @@ V_SIZES = [
 ]
 
 $cont = null
+$loader = null
 video_template = null
 screenshot_template = null
 wall = null
@@ -41,6 +42,7 @@ get_videos = (id, cb) ->
     res = 'me'
   else
     res = 'friend/' + id
+  $loader.css 'display', 'block'
   $.getJSON build_url(res), (data) ->
     cb data
 
@@ -84,9 +86,11 @@ display_videos_chunk = ->
   if clear_cont
     $cont.html ''
   $cont.append(to_append).masonry 'appended', to_append, true
+  $loader.css 'display', 'none'
 
 scroll_check = ->
   if current_index < videos.length and $(window).scrollTop() >= $(document).height() - $(window).height() - 100
+    $loader.css 'display', 'block'
     display_videos_chunk()
 
 load_video = ->
@@ -117,6 +121,7 @@ clear_container = (first_load = false) ->
 
 $ ->
   $cont = $ '#container'
+  $loader = $ '.loader'
 
   update_cont_size()
   $(window).resize update_cont_size
@@ -138,6 +143,9 @@ $ ->
     console.log source
     $search.autocomplete
       source: source
+      source: (request, response) ->
+        results = $.ui.autocomplete.filter source, request.term
+        response results.slice 0, 10
       focus: (event, ui) ->
         $search.val ui.item.value
         false
@@ -153,3 +161,6 @@ $ ->
             # history.pushState {state:state_index}, '', '/friend/' + ui.item.label
             state_index++
             return false
+
+    $('.right_menu a').click ->
+      my_videos()
