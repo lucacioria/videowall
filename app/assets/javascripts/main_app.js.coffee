@@ -30,7 +30,7 @@ build_url = (res) ->
 	'/videos/' + res
 
 video_id = (url) ->
-  match = url.match /\?v=([^&]+)/
+  match = url.match /v=([^&#]+)/
   match?[1]
 
 get_videos = (id, cb) ->
@@ -46,7 +46,7 @@ get_friends = (cb) ->
   $.getJSON '/videos/friends', cb
 
 get_size = (video) ->
-  if video.starred or Math.random() > 0.80
+  if video.starred or Math.random() > 0.90
     V_SIZES[0]
   else
     V_SIZES[1]
@@ -124,8 +124,20 @@ $ ->
       focus: (event, ui) ->
         $search.val ui.item.label
         false
+      selected: (event, ui) ->
+        $search.val ui.item.label
+        false
+      close: (event, ui) ->
+        $search.val ui.item.label
+        false
       change: (event, ui) ->
+        $search.val ui.item.label
         get_videos ui.item.value, (v) ->
           current_index = 0
+          $cont.masonry 'destroy'
+          $cont.masonry
+            columnWidth: COLUMN_WIDTH
+            isResizable: true
           display_videos_chunk()
+        false
 
