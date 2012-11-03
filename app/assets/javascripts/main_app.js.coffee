@@ -19,6 +19,7 @@ V_SIZES = [
 
 $cont = null
 video_template = null
+screenshot_template = null
 wall = null
 
 videos = []
@@ -54,19 +55,17 @@ display_videos_chunk = ->
   while area < available_area and current_index < videos.length
 
     video = videos[current_index]
-    current_index++
     size = get_size video
     area += size.width * size.height
 
-    to_append.push video_template
+    to_append.push $ screenshot_template
       video_id: video_id video.video_url
       width: size.width
       height: size.height
       class_mod: size.mod
+      video_index: current_index
 
-  console.log current_index
-  if current_index >= videos.length
-    console.log 'scroll end'
+    current_index++
 
   $cont.append(to_append).masonry 'appended', to_append, true
 
@@ -74,19 +73,31 @@ scroll_check = ->
   if current_index < videos.length and $(window).scrollTop() >= $(document).height() - $(window).height() - 100
     display_videos_chunk()
 
+load_video = ->
+  id = $(@).data 'videoid'
+  video = videos[id]
+  size = get_size video
+  $(@).html = video_template
+    video_id: video_id video.video_url
+    width: size.width
+    height: size.height
+    class_mod: size.mod
+
 $ ->
   $cont = $ '#container'
 
   update_cont_size()
   $(window).resize update_cont_size
   $(window).scroll scroll_check
+  $('.screenshot').live 'click', load_video
 
   video_template = _.template $('#video-template').html()
+  screenshot_template = _.template $('#screenshot-template').html()
 
   get_videos (v) ->
     videos = v
 
-    display_videos_chunk()
     $cont.masonry
       columnWidth: COLUMN_WIDTH
       isResizable: true
+    display_videos_chunk()
