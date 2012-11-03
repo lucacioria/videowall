@@ -46,12 +46,14 @@ class VideosController < ApplicationController
     video = Video.find(params[:id])
     video.starred = !video.starred
     video.save
+    render :text => "bella"
   end
 
   def toggle_hidden
     video = Video.find(params[:id])
     video.hidden = !video.hidden
     video.save
+    render :text => "yo"
   end
 
   private
