@@ -1,6 +1,6 @@
 class VideosController < ApplicationController
   
-  before_filter :fake_login
+  # before_filter :fake_login
 
   def me
     if user_signed_in? then
@@ -24,7 +24,7 @@ class VideosController < ApplicationController
         end
         out << video if not video_deleted
       }
-      render json: out
+      render json: out.shuffle
     else
       render json: []
     end
