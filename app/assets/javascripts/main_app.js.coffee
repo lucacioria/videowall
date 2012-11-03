@@ -25,6 +25,8 @@ wall = null
 videos = []
 friends = []
 current_index = 0
+history = null
+state_index = 0
 
 build_url = (res) ->
 	'/videos/' + res
@@ -97,6 +99,22 @@ load_video = ->
     height: size.height
     class_mod: size.mod
 
+my_videos = (first_load = false) ->
+  get_videos (v) ->
+    videos = v
+
+    clear_container first_load
+    display_videos_chunk()
+
+clear_container = (first_load = false) ->
+  current_index = 0
+  if not first_load
+    $cont.masonry 'destroy'
+    $cont.html ''
+  $cont.masonry
+    columnWidth: COLUMN_WIDTH
+    isResizable: true
+
 $ ->
   $cont = $ '#container'
 
@@ -108,36 +126,30 @@ $ ->
   video_template = _.template $('#video-template').html()
   screenshot_template = _.template $('#screenshot-template').html()
 
-  get_videos (v) ->
-    videos = v
+  history = History
+  history.Adapter.bind window, 'statechange', ->
 
-    $cont.masonry
-      columnWidth: COLUMN_WIDTH
-      isResizable: true
-    display_videos_chunk()
+  my_videos true
 
   get_friends (f) ->
     friends = f
     $search = $('#search')
+    source = (el.name for el in friends)
+    console.log source
     $search.autocomplete
-      source: ({value: el.id, label: el.name} for el in friends)
+      source: source
       focus: (event, ui) ->
-        $search.val ui.item.label
+        $search.val ui.item.value
         false
-      selected: (event, ui) ->
-        $search.val ui.item.label
-        false
-      close: (event, ui) ->
-        $search.val ui.item.label
-        false
-      change: (event, ui) ->
-        $search.val ui.item.label
-        get_videos ui.item.value, (v) ->
-          current_index = 0
-          $cont.masonry 'destroy'
-          $cont.masonry
-            columnWidth: COLUMN_WIDTH
-            isResizable: true
-          display_videos_chunk()
-        false
+      select: (event, ui) ->
+        if not ui.item then return
+        for el in friends
+          if el.name == ui.item.value
+            get_videos el.id, (v) ->
+              videos = v
+              clear_container()
+              display_videos_chunk()
 
+            # history.pushState {state:state_index}, '', '/friend/' + ui.item.label
+            state_index++
+            return false
