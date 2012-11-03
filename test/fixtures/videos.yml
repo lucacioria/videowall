@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  url: MyString
+  type: 
+  action_date: 2012-11-02 19:22:14
+  hidden: false
+  starred: false
+
+two:
+  url: MyString
+  type: 
+  action_date: 2012-11-02 19:22:14
+  hidden: false
+  starred: false
