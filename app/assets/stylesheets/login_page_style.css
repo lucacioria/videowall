@@ -272,7 +272,15 @@ footer {
 	width:725px;
 	margin:0 auto;
 	display:block;
+	position: relative;
 }
+
+.feature_wrapper img {
+	position:relative;
+	margin-left:-88px;
+
+}
+
 
 .feature_box_left {
 	width:330px;
@@ -377,12 +385,13 @@ footer {
 	margin-top:0;
 	position:relative;
 	width:100%;
-	font-size:60px;
-	font-family: 'Sanchez';
+	color: #3d5999;
+	font-size:120px;
+	font-family: 'Cedarville Cursive';
 	height:200px;
 	box-shadow:1px 1px 3px #292929;
 	text-align:center;
-	color:#454545;
+	/*color:#454545;*/
 	text-shadow:0 1px 0 #fff;
 	line-height: 200px;
 }
