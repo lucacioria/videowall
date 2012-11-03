@@ -79,7 +79,7 @@ display_videos_chunk = ->
       class_mod: size.mod
       video_index: current_index
       video_size: JSON.stringify size
-      highlighted: video.highlighted
+      highlighted: video.starred
 
     current_index++
 
@@ -134,6 +134,11 @@ toggle_highlighted = (e) ->
   $(@).toggleClass 'off'
 
   $screenshot = $(@).parent().parent().parent()
+  videoindex = $screenshot.data 'videoid'
+  video = videos[videoindex]
+
+  $.get '/videos/toggle_starred/' + video.id
+
   videosize = $screenshot.data 'videosize'
   if videosize.mod is 'big' then return false
 
@@ -142,8 +147,6 @@ toggle_highlighted = (e) ->
   videosize = toggle_size videosize
   $screenshot.data 'videosize', videosize
 
-  videoindex = $screenshot.data 'videoid'
-  video = videos[videoindex]
   new_screen = $ screenshot_template
     video_id: video_id video.video_url
     width: videosize.width
