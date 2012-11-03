@@ -7,18 +7,15 @@ videos = []
 
 V_SIZES = [
   {
+    mod: 'big'
     width: 475
     height: 267
   }
   {
+    mod: 'small'
     width: 230
     height: 129
   }
-]
-
-V_MOD = [
-  'big'
-  'small'
 ]
 
 build_url = (res) ->
@@ -34,26 +31,36 @@ get_videos = (cb) ->
 
 get_size = (video) ->
   if video.video_type is 'facebook_like'
-    size: V_SIZES[1]
-    mod: V_MOD[1]
+    V_SIZES[1]
   else
-    size: V_SIZES[0]
-    mod: V_MOD[0]
+    V_SIZES[0]
+
+update_cont_size = ->
+  win_width = $(window).width()
+  cont_width = win_width / V_SIZES[0].width - win_width % V_SIZES[0].width
+  cont_width += V_SIZES[1].width while cont_width + V_SIZES[1].width < win_width
+
+  $('.wrapper').css 'max-width', cont_width + 'px'
+  $cont.css 'margin-left', win_width - cont_width + 'px'
+
+$cont = null
 
 $ ->
-  video_template = _.template $('#video-template').html()
-
   $cont = $ '#container'
+
+  update_cont_size()
+
+  video_template = _.template $('#video-template').html()
 
   get_videos (v) ->
     videos = v
     for video in videos
-      s = get_size video
+      size = get_size video
       $cont.append video_template
         video_id: video_id video.video_url
-        width: s.size.width
-        height: s.size.height
-        class_mod: s.mod
+        width: size.width
+        height: size.height
+        class_mod: size.mod
 
     wall = new Masonry $cont[0],
       columnWidth: 245
