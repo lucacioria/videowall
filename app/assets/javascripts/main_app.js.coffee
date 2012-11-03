@@ -23,18 +23,27 @@ screenshot_template = null
 wall = null
 
 videos = []
+friends = []
 current_index = 0
 
 build_url = (res) ->
-	'/videos/me'
+	'/videos/' + res
 
 video_id = (url) ->
   match = url.match /\?v=([^&]+)/
   match?[1]
 
-get_videos = (cb) ->
-	$.getJSON build_url('videos'), (data) ->
+get_videos = (id, cb) ->
+  if not cb
+    cb = id
+    res = 'me'
+  else
+    res = 'friend/' + id
+  $.getJSON build_url(res), (data) ->
     cb data
+
+get_friends = (cb) ->
+  $.getJSON '/videos/friends', cb
 
 get_size = (video) ->
   if video.starred or Math.random() > 0.80
@@ -52,6 +61,7 @@ display_videos_chunk = ->
   available_area = $(window).width() * $(window).height()
   area = 0
   to_append = []
+  clear_cont = current_index == 0
   while area < available_area and current_index < videos.length
 
     video = videos[current_index]
@@ -69,7 +79,8 @@ display_videos_chunk = ->
     current_index++
 
   to_append = $ to_append.join ''
-  console.log to_append
+  if clear_cont
+    $cont.html ''
   $cont.append(to_append).masonry 'appended', to_append, true
 
 scroll_check = ->
@@ -104,3 +115,17 @@ $ ->
       columnWidth: COLUMN_WIDTH
       isResizable: true
     display_videos_chunk()
+
+  get_friends (f) ->
+    friends = f
+    $search = $('#search')
+    $search.autocomplete
+      source: ({value: el.id, label: el.name} for el in friends)
+      focus: (event, ui) ->
+        $search.val ui.item.label
+        false
+      change: (event, ui) ->
+        get_videos ui.item.value, (v) ->
+          current_index = 0
+          display_videos_chunk()
+

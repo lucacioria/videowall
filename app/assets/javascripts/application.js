@@ -14,3 +14,4 @@
 //= require jquery_ujs
 //= require tabs
 //= require_tree .
+//= require jquery.ui.autocomplete
