@@ -2,8 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-displayed = []
-videos = []
+COLUMN_WIDTH = 245
 
 V_SIZES = [
   {
@@ -18,6 +17,13 @@ V_SIZES = [
   }
 ]
 
+$cont = null
+video_template = null
+wall = null
+
+videos = []
+current_index = 0
+
 build_url = (res) ->
 	'/videos'
 
@@ -30,38 +36,57 @@ get_videos = (cb) ->
     cb data
 
 get_size = (video) ->
-  if video.video_type is 'facebook_like'
-    V_SIZES[1]
-  else
+  if video.starred or Math.random() > 0.80
     V_SIZES[0]
+  else
+    V_SIZES[1]
 
 update_cont_size = ->
-  win_width = $(window).width()
-  cont_width = win_width / V_SIZES[0].width - win_width % V_SIZES[0].width
-  cont_width += V_SIZES[1].width while cont_width + V_SIZES[1].width < win_width
+  win_width = $(document).width()
+  cont_width = win_width - win_width % COLUMN_WIDTH
 
   $('.wrapper').css 'max-width', cont_width + 'px'
-  $cont.css 'margin-left', win_width - cont_width + 'px'
 
-$cont = null
+display_videos_chunk = ->
+  available_area = $(window).width() * $(window).height()
+  area = 0
+  to_append = []
+  while area < available_area and current_index < videos.length
+
+    video = videos[current_index]
+    current_index++
+    size = get_size video
+    area += size.width * size.height
+
+    to_append.push video_template
+      video_id: video_id video.video_url
+      width: size.width
+      height: size.height
+      class_mod: size.mod
+
+  console.log current_index
+  if current_index >= videos.length
+    console.log 'scroll end'
+
+  $cont.append(to_append).masonry 'appended', to_append, true
+
+scroll_check = ->
+  if current_index < videos.length and $(window).scrollTop() >= $(document).height() - $(window).height() - 100
+    display_videos_chunk()
 
 $ ->
   $cont = $ '#container'
 
   update_cont_size()
+  $(window).resize update_cont_size
+  $(window).scroll scroll_check
 
   video_template = _.template $('#video-template').html()
 
   get_videos (v) ->
     videos = v
-    for video in videos
-      size = get_size video
-      $cont.append video_template
-        video_id: video_id video.video_url
-        width: size.width
-        height: size.height
-        class_mod: size.mod
 
-    wall = new Masonry $cont[0],
-      columnWidth: 245
+    display_videos_chunk()
+    $cont.masonry
+      columnWidth: COLUMN_WIDTH
       isResizable: true

@@ -8,6 +8,8 @@ body {
 	padding:0;
 	background:#f2f2f2;
 	font-family:'lucida grande',tahoma,verdana,arial,sans-serif;
+	text-align: center;
+	padding-top: 70px;
 }
 
 #header_wrap {
@@ -119,10 +121,9 @@ footer {
 }
 
 .wrapper {
-	height:100%;
-	margin:0 auto;
-	padding-top:70px;
-	background-color:#f2f2f2;
+	margin: 0px auto;
+	height: 100%;
+	background-color: #f2f2f2;
 }
 
 .video_big {
@@ -160,7 +161,7 @@ footer {
 }
 
 #container {
-	clear:both;
+	margin: 0px auto;
 }
 
 .masonry,.masonry .masonry-brick {
