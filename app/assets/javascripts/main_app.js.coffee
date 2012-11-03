@@ -5,6 +5,8 @@
 displayed = []
 videos = []
 
+COLUMN_WIDTH = 245
+
 V_SIZES = [
   {
     mod: 'big'
@@ -19,7 +21,7 @@ V_SIZES = [
 ]
 
 build_url = (res) ->
-	'/videos.json'
+	'/videos'
 
 video_id = (url) ->
   match = url.match /\?v=([^&]+)/
@@ -30,18 +32,16 @@ get_videos = (cb) ->
     cb data
 
 get_size = (video) ->
-  if video.video_type is 'facebook_like'
-    V_SIZES[1]
-  else
+  if video.starred or Math.random() > 0.80
     V_SIZES[0]
+  else
+    V_SIZES[1]
 
 update_cont_size = ->
-  win_width = $(window).width()
-  cont_width = win_width / V_SIZES[0].width - win_width % V_SIZES[0].width
-  cont_width += V_SIZES[1].width while cont_width + V_SIZES[1].width < win_width
+  win_width = $(document).width()
+  cont_width = win_width - win_width % COLUMN_WIDTH
 
   $('.wrapper').css 'max-width', cont_width + 'px'
-  $cont.css 'margin-left', win_width - cont_width + 'px'
 
 $cont = null
 
@@ -63,5 +63,5 @@ $ ->
         class_mod: size.mod
 
     wall = new Masonry $cont[0],
-      columnWidth: 245
+      columnWidth: COLUMN_WIDTH
       isResizable: true
