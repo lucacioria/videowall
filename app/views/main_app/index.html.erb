@@ -1,1 +1,15 @@
-ciao!!
+<div class="wrapper">
+  <div id="container"></div>
+</div>
+
+
+<!-- Templates -->
+
+<script type="text/template" id="video-template">
+  <div class="video_<%%- class_mod %>">
+	<div class="video_container_<%%- class_mod %>">
+  		<iframe width="<%%- width %>" height="<%%- height %>" src="http://www.youtube.com/embed/<%%- video_id %>?modestbranding=1&rel=0&showinfo=0&autohide=1"
+frameborder="0" allowfullscreen></iframe>
+  	</div>
+  </div>
+</script>
